@@ -7,6 +7,7 @@ output: html_notebook
 library("quantmod")
 library("e1071")
 require("quantmod")
+library(ggplot2)
 ```
 
 ```{r echo=FALSE, message=TRUE, warning=TRUE, paged.print=TRUE}
@@ -33,10 +34,8 @@ for(i in SP500$Ticker){
   }
 }
 ```
-
-```{r}
-#with(sp, AAPL)
-```
+Question 1
+Building of the matrix with the mean, the variance, the skewness and kurtosis
 ```{r}
 moyenne <- c()
 variance <- c()
@@ -50,10 +49,101 @@ for(i in listEnterprise){
   skew <- c(skew, skewness(adjusted))
   kurto <- c(kurto, kurtosis(adjusted))
 }
+moyenne = na.omit(moyenne)
+variance = na.omit(variance)
+skew = na.omit(skew)
+kurto = na.omit(kurto)
 SP500Matrix <- c(moyenne, variance, skew, kurto)
 SP500Matrix <- matrix(SP500Matrix, byrow=TRUE, nrow = 4)
 ```
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+Nonparametric density estimates
+```{r}
+cat("The mean of the mean of comapanys is",mean(moyenne),"whereas its medianne is equal to", median(moyenne))
+```
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
+cat("The mean of the variance of comapanys is",mean(variance),"whereas its medianne is equal to", median(variance))
+```
+
+```{r}
+cat("The mean of the skewness of comapanys is",mean(skew),"whereas its medianne is equal to", median(skew))
+```
+
+```{r}
+cat("The mean of the kurtosis of comapanys is",mean(kurto),"whereas its medianne is equal to", median(kurto))
+```
+```{r}
+moyennedf = data.frame(moyenne)
+gg = ggplot(data =moyennedf, aes(x=moyenne)) + geom_histogram(binwidth=5, colour="black", aes(y=..density.., fill=..count..))
+gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
+gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(moyenne), sd=sd(moyenne))) 
+gg = gg + ggtitle("Histogramm of the mean")
+gg
+```
+```{r}
+moyennedf = data.frame(variance)
+gg = ggplot(data =moyennedf, aes(x=variance)) + geom_histogram(binwidth=10, colour="black", aes(y=..density.., fill=..count..))
+gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
+gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(variance), sd=sd(variance))) 
+gg = gg + ggtitle("Histogramm of the variance")
+gg
+```
+```{r}
+moyennedf = data.frame(skew)
+gg = ggplot(data =moyennedf, aes(x=skew)) + geom_histogram(binwidth=0.1, colour="black", aes(y=..density.., fill=..count..))
+gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
+gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(skew), sd=sd(skew))) 
+gg = gg + ggtitle("Histogramm of the skewness")
+gg
+```
+```{r}
+moyennedf = data.frame(kurto)
+gg = ggplot(data =moyennedf, aes(x=kurto)) + geom_histogram(binwidth=0.2, colour="black", aes(y=..density.., fill=..count..))
+gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
+gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(kurto), sd=sd(kurto))) 
+gg = gg + ggtitle("Histogramm of the kurtosis coefficient")
+gg
+```
+We can see 
+
+Question3
+```{r}
+moyenne3 <- c()
+variance3 <- c()
+skew3 <- c()
+kurto3 <- c()
+for(i in listEnterprise){
+  a = getSymbols(i, auto.assign = FALSE, to = as.Date("2007-01-01"))
+  adjusted = Ad(a)
+  moyenne3 <- c(moyenne3,mean(adjusted))
+  variance3 <- c(variance3,sqrt(var(adjusted)))
+  skew3 <- c(skew3, skewness(adjusted))
+  kurto3 <- c(kurto3, kurtosis(adjusted))
+}
+moyenne3 = na.omit(moyenne3)
+variance3 = na.omit(variance3)
+skew3 = na.omit(skew3)
+kurto3 = na.omit(kurto3)
+SP500Matrix3 <- c(moyenne3, variance3, skew3, kurto3)
+SP500Matrix3 <- matrix(SP500Matrix3, byrow=TRUE, nrow = 4)
+```
+```{r}
+moyennedf3 = data.frame(moyenne3)
+gg = ggplot(data =moyennedf3, aes(x=moyenne3)) + geom_histogram(binwidth=5, colour="black", aes(y=..density.., fill=..count..))
+gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
+gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(moyenne3), sd=sd(moyenne3))) 
+gg = gg + ggtitle("Histogramm of the mean before 2007")
+gg
+```
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
