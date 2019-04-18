@@ -8,7 +8,7 @@ library("quantmod")
 require("quantmod")
 ```
 
-```{r}
+```{r echo=FALSE, message=TRUE, warning=TRUE, paged.print=TRUE}
 sp500 <- new.env()
 getSymbols("^GSPC", env = sp500, src = "yahoo", from = as.Date("1960-01-04"), to = as.Date("2009-01-01"))
 GSPC <- sp500$GSPC
@@ -22,20 +22,35 @@ SP500['Ticker']
 ```{r}
 SP500 <- read.csv("SP500constituentsSecid2016sector.csv", header=TRUE, sep=",")
 sp<- new.env()
+listEnterprise <- c()
 for(i in SP500$Ticker){
-#for (i in SP500['Ticker']){
-  print(i)
   cat("Downloading time series for symbol '", i, "' ...\n", sep = "")
   status <- tryCatch(getSymbols(i, env = sp, src = "yahoo", from = as.Date("2007-01-01")), error = identity)
   if(inherits(status, "error")) cat("Symbol '", i, "' not downloadable!\n", sep = "")
+  else{
+    listEnterprise <- c(listEnterprise, i)
+  }
 }
 ```
 
 ```{r}
-with(sp, AAPL)
+#with(sp, AAPL)
+```
+```{r}
+moyenne <- c()
+variance <- c()
+skewness <- c()
+kurtosis <- c()
+for(i in listEnterprise[1:7]){
+  a = getSymbols(i, auto.assign = FALSE)
+  adjusted = Ad(a)
+  moyenne <- c(moyenne,mean(adjusted))
+  variance <- c(variance,sqrt(var(adjusted)))
+}
+SP500Matrix <- c(moyenne, variance)
+SP500Matrix <- matrix(SP500Matrix, byrow=TRUE, nrow = 2)
 ```
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
-
 When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
 
 The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
