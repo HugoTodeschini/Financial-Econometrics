@@ -21,13 +21,13 @@ SP500 <-read.csv("SP500constituentsSecid2016sector.csv", stringsAsFactors = FALS
 SP500['Ticker']
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 SP500 <- read.csv("SP500constituentsSecid2016sector.csv", header=TRUE, sep=",")
 sp<- new.env()
 listEnterprise <- c()
 for(i in SP500$Ticker){
   cat("Downloading time series for symbol '", i, "' ...\n", sep = "")
-  status <- tryCatch(getSymbols(i, env = sp, src = "yahoo", from = as.Date("2007-01-01")), error = identity)
+  status <- tryCatch(getSymbols(i, env = sp, src = "yahoo", from = as.Date("1960-01-01")), error = identity)
   if(inherits(status, "error")) cat("Symbol '", i, "' not downloadable!\n", sep = "")
   else{
     listEnterprise <- c(listEnterprise, i)
@@ -42,13 +42,16 @@ variance <- c()
 skew <- c()
 kurto <- c()
 for(i in listEnterprise){
-  a = getSymbols(i, auto.assign = FALSE, from = as.Date("1960-01-01"))
-  adjusted = Ad(a)
-  return = exp(diff(log(adjusted))) - 1
-  moyenne <- c(moyenne,mean(return))
-  variance <- c(variance,sqrt(var(return)))
-  skew <- c(skew, skewness(return))
-  kurto <- c(kurto, kurtosis(return))
+  if (i!= "BHI"){
+    a = getSymbols(i, auto.assign = FALSE, from = as.Date("1960-01-01"))
+    adjusted = Ad(a)
+    return = exp(diff(log(adjusted))) - 1
+    return = return[2:length(return)]
+    moyenne <- c(moyenne,mean(return))
+    variance <- c(variance,sqrt(var(return)))
+    skew <- c(skew, skewness(return))
+    kurto <- c(kurto, kurtosis(return))
+  }
 }
 moyenne = na.omit(moyenne)
 variance = na.omit(variance)
@@ -57,6 +60,7 @@ kurto = na.omit(kurto)
 SP500Matrix <- c(moyenne, variance, skew, kurto)
 SP500Matrix <- matrix(SP500Matrix, byrow=TRUE, nrow = 4)
 ```
+
 Nonparametric density estimates
 ```{r}
 cat("The mean of the mean of comapanys is",mean(moyenne),"whereas its medianne is equal to", median(moyenne))
@@ -75,7 +79,7 @@ cat("The mean of the kurtosis of comapanys is",mean(kurto),"whereas its medianne
 ```
 ```{r}
 moyennedf = data.frame(moyenne)
-gg = ggplot(data =moyennedf, aes(x=moyenne)) + geom_histogram(binwidth=5, colour="black", aes(y=..density.., fill=..count..))
+gg = ggplot(data =moyennedf, aes(x=moyenne)) + geom_histogram(binwidth=0.0002, colour="black", aes(y=..density.., fill=..count..))
 gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
 gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(moyenne), sd=sd(moyenne))) 
 gg = gg + ggtitle("Histogramm of the mean")
@@ -83,7 +87,7 @@ gg
 ```
 ```{r}
 variancedf = data.frame(variance)
-gg = ggplot(data =variancedf, aes(x=variance)) + geom_histogram(binwidth=10, colour="black", aes(y=..density.., fill=..count..))
+gg = ggplot(data =variancedf, aes(x=variance)) + geom_histogram(binwidth=0.01, colour="black", aes(y=..density.., fill=..count..))
 gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
 gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(variance), sd=sd(variance))) 
 gg = gg + ggtitle("Histogramm of the variance")
@@ -91,7 +95,7 @@ gg
 ```
 ```{r}
 skewdf = data.frame(skew)
-gg = ggplot(data =skewdf, aes(x=skew)) + geom_histogram(binwidth=0.1, colour="black", aes(y=..density.., fill=..count..))
+gg = ggplot(data =skewdf, aes(x=skew)) + geom_histogram(binwidth=2.0, colour="black", aes(y=..density.., fill=..count..))
 gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
 gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(skew), sd=sd(skew))) 
 gg = gg + ggtitle("Histogramm of the skewness")
@@ -99,7 +103,7 @@ gg
 ```
 ```{r}
 kurtodf = data.frame(kurto)
-gg = ggplot(data =kurtodf, aes(x=kurto)) + geom_histogram(binwidth=0.2, colour="black", aes(y=..density.., fill=..count..))
+gg = ggplot(data =kurtodf, aes(x=kurto)) + geom_histogram(binwidth=200, colour="black", aes(y=..density.., fill=..count..))
 gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
 gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(kurto), sd=sd(kurto))) 
 gg = gg + ggtitle("Histogramm of the kurtosis coefficient")
@@ -112,25 +116,11 @@ Kurtosis evaluates the spread of extreme values with respect to the normal distr
 Question2
 
 ```{r}
-moyenne2 <- c()
-variance2 <- c()
-skew2 <- c()
-kurto2 <- c()
-for(i in listEnterprise[1:7]){
-  a = getSymbols(i, auto.assign = FALSE, from = as.Date("2007-01-01"))
+for(i in listEnterprise){
+  a = getSymbols(i, auto.assign = FALSE, from = as.Date("1960-01-01"))
   adjusted = Ad(a)
   return = exp(diff(log(adjusted))) - 1
-  moyenne2 <- c(moyenne,mean(return))
-  variance2 <- c(variance,sqrt(var(return)))
-  skew2 <- c(skew, skewness(return))
-  kurto2 <- c(kurto, kurtosis(return))
 }
-moyenne2 = na.omit(moyenne2)
-variance2 = na.omit(variance2)
-skew2 = na.omit(skew2)
-kurto2 = na.omit(kurto2)
-SP500Matrix2 <- c(moyenne2, variance2, skew2, kurto2)
-SP500Matrix2 <- matrix(SP500Matrix2, byrow=TRUE, nrow = 4)
 ```
 
 Question3
@@ -140,12 +130,14 @@ variance3 <- c()
 skew3 <- c()
 kurto3 <- c()
 for(i in listEnterprise){
-  a = getSymbols(i, auto.assign = FALSE, to = as.Date("2007-01-01"))
+  a = getSymbols(i, auto.assign = FALSE, from = as.Date("1960-01-01"), to = as.Date("2007-01-01"))
   adjusted = Ad(a)
-  moyenne3 <- c(moyenne3,mean(adjusted))
-  variance3 <- c(variance3,sqrt(var(adjusted)))
-  skew3 <- c(skew3, skewness(adjusted))
-  kurto3 <- c(kurto3, kurtosis(adjusted))
+  return = exp(diff(log(adjusted))) - 1
+  return = return[2:length(return)]
+  moyenne3 <- c(moyenne3,mean(return))
+  variance3 <- c(variance3,sqrt(var(return)))
+  skew3 <- c(skew3, skewness(return))
+  kurto3 <- c(kurto3, kurtosis(return))
 }
 moyenne3 = na.omit(moyenne3)
 variance3 = na.omit(variance3)
@@ -200,10 +192,12 @@ kurto4 <- c()
 for(i in listEnterprise){
   a = getSymbols(i, auto.assign = FALSE, from = as.Date("2009-01-01"))
   adjusted = Ad(a)
-  moyenne4 <- c(moyenne4,mean(adjusted))
-  variance4 <- c(variance4,sqrt(var(adjusted)))
-  skew4 <- c(skew4, skewness(adjusted))
-  kurto4 <- c(kurto4, kurtosis(adjusted))
+  return = exp(diff(log(adjusted))) - 1
+  return = return[2:length(return)]
+  moyenne4 <- c(moyenne4,mean(return))
+  variance4 <- c(variance4,sqrt(var(return)))
+  skew4 <- c(skew4, skewness(return))
+  kurto4 <- c(kurto4, kurtosis(return))
 }
 moyenne4 = na.omit(moyenne4)
 variance4 = na.omit(variance4)
