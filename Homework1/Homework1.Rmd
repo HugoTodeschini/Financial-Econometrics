@@ -42,12 +42,13 @@ variance <- c()
 skew <- c()
 kurto <- c()
 for(i in listEnterprise){
-  a = getSymbols(i, auto.assign = FALSE, from = as.Date("2007-01-01"))
+  a = getSymbols(i, auto.assign = FALSE, from = as.Date("1960-01-01"))
   adjusted = Ad(a)
-  moyenne <- c(moyenne,mean(adjusted))
-  variance <- c(variance,sqrt(var(adjusted)))
-  skew <- c(skew, skewness(adjusted))
-  kurto <- c(kurto, kurtosis(adjusted))
+  return = exp(diff(log(adjusted))) - 1
+  moyenne <- c(moyenne,mean(return))
+  variance <- c(variance,sqrt(var(return)))
+  skew <- c(skew, skewness(return))
+  kurto <- c(kurto, kurtosis(return))
 }
 moyenne = na.omit(moyenne)
 variance = na.omit(variance)
@@ -107,6 +108,30 @@ gg
 Skewness evaluates the asymmetry of a distribution here there are 3 left-skewed distributions mean variance and kurtosis meaning a negative skewness.
 Skewness as a variable has on the contrary a null skewness fitting the normal distribution.
 Kurtosis evaluates the spread of extreme values with respect to the normal distribution and is regarded as the flatness compared to it. the kurtosis of the four variables are hence all negative as it is seen that they have a higher spike.
+
+Question2
+
+```{r}
+moyenne2 <- c()
+variance2 <- c()
+skew2 <- c()
+kurto2 <- c()
+for(i in listEnterprise[1:7]){
+  a = getSymbols(i, auto.assign = FALSE, from = as.Date("2007-01-01"))
+  adjusted = Ad(a)
+  return = exp(diff(log(adjusted))) - 1
+  moyenne2 <- c(moyenne,mean(return))
+  variance2 <- c(variance,sqrt(var(return)))
+  skew2 <- c(skew, skewness(return))
+  kurto2 <- c(kurto, kurtosis(return))
+}
+moyenne2 = na.omit(moyenne2)
+variance2 = na.omit(variance2)
+skew2 = na.omit(skew2)
+kurto2 = na.omit(kurto2)
+SP500Matrix2 <- c(moyenne2, variance2, skew2, kurto2)
+SP500Matrix2 <- matrix(SP500Matrix2, byrow=TRUE, nrow = 4)
+```
 
 Question3
 ```{r}
