@@ -103,7 +103,7 @@ gg
 ```
 ```{r}
 kurtodf = data.frame(kurto)
-gg = ggplot(data =kurtodf, aes(x=kurto)) + geom_histogram(binwidth=200, colour="black", aes(y=..density.., fill=..count..))
+gg = ggplot(data =kurtodf, aes(x=kurto)) + geom_histogram(binwidth=100, colour="black", aes(y=..density.., fill=..count..))
 gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
 gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(kurto), sd=sd(kurto))) 
 gg = gg + ggtitle("Histogramm of the kurtosis coefficient")
@@ -130,14 +130,16 @@ variance3 <- c()
 skew3 <- c()
 kurto3 <- c()
 for(i in listEnterprise){
-  a = getSymbols(i, auto.assign = FALSE, from = as.Date("1960-01-01"), to = as.Date("2007-01-01"))
-  adjusted = Ad(a)
-  return = exp(diff(log(adjusted))) - 1
-  return = return[2:length(return)]
-  moyenne3 <- c(moyenne3,mean(return))
-  variance3 <- c(variance3,sqrt(var(return)))
-  skew3 <- c(skew3, skewness(return))
-  kurto3 <- c(kurto3, kurtosis(return))
+  if(i !="ABBV" & i !="ALLE" & i !="AWK" & i !="BHI"){
+    a = getSymbols(i, auto.assign = FALSE, from = as.Date("1960-01-01"), to = as.Date("2007-01-01"))
+    adjusted = Ad(a)
+    return = exp(diff(log(adjusted))) - 1
+    return = return[2:length(return)]
+    moyenne3 <- c(moyenne3,mean(return))
+    variance3 <- c(variance3,sqrt(var(return)))
+    skew3 <- c(skew3, skewness(return))
+    kurto3 <- c(kurto3, kurtosis(return))
+  }
 }
 moyenne3 = na.omit(moyenne3)
 variance3 = na.omit(variance3)
@@ -209,7 +211,7 @@ SP500Matrix4 <- matrix(SP500Matrix4, byrow=TRUE, nrow = 4)
 
 ```{r}
 moyennedf4 = data.frame(moyenne4)
-gg = ggplot(data =moyennedf4, aes(x=moyenne4)) + geom_histogram(binwidth=5, colour="black", aes(y=..density.., fill=..count..))
+gg = ggplot(data =moyennedf4, aes(x=moyenne4)) + geom_histogram(binwidth=0.00005, colour="black", aes(y=..density.., fill=..count..))
 gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
 gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(moyenne4), sd=sd(moyenne4))) 
 gg = gg + ggtitle("Histogramm of the mean after 2009")
@@ -218,7 +220,7 @@ gg
 
 ```{r}
 variancedf4 = data.frame(variance4)
-gg = ggplot(data =variancedf4, aes(x=variance4)) + geom_histogram(binwidth=10, colour="black", aes(y=..density.., fill=..count..))
+gg = ggplot(data =variancedf4, aes(x=variance4)) + geom_histogram(binwidth=0.001, colour="black", aes(y=..density.., fill=..count..))
 gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
 gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(variance4), sd=sd(variance4))) 
 gg = gg + ggtitle("Histogramm of the variance before 2007")
@@ -227,7 +229,7 @@ gg
 
 ```{r}
 skewdf4 = data.frame(skew4)
-gg = ggplot(data =skewdf4, aes(x=skew4)) + geom_histogram(binwidth=0.1, colour="black", aes(y=..density.., fill=..count..))
+gg = ggplot(data =skewdf4, aes(x=skew4)) + geom_histogram(binwidth=1.0, colour="black", aes(y=..density.., fill=..count..))
 gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
 gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(skew4), sd=sd(skew4))) 
 gg = gg + ggtitle("Histogramm of the skewness after 2009")
@@ -236,11 +238,10 @@ gg
 
 ```{r}
 kurtodf4 = data.frame(kurto4)
-gg = ggplot(data =kurtodf4, aes(x=kurto4)) + geom_histogram(binwidth=0.2, colour="black", aes(y=..density.., fill=..count..))
+gg = ggplot(data =kurtodf4, aes(x=kurto4)) + geom_histogram(binwidth=10, colour="black", aes(y=..density.., fill=..count..))
 gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
 gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(kurto4), sd=sd(kurto4))) 
 gg = gg + ggtitle("Histogramm of the kurtosis coefficient after 2009")
 gg
 ```
-
 Question5
