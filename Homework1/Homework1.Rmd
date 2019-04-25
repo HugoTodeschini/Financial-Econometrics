@@ -42,7 +42,6 @@ variance <- c()
 skew <- c()
 kurto <- c()
 for(i in listEnterprise){
-  if (i!= "BHI"){
     a = getSymbols(i, auto.assign = FALSE, from = as.Date("1960-01-01"))
     adjusted = Ad(a)
     return = exp(diff(log(adjusted))) - 1
@@ -51,7 +50,6 @@ for(i in listEnterprise){
     variance <- c(variance,sqrt(var(return)))
     skew <- c(skew, skewness(return))
     kurto <- c(kurto, kurtosis(return))
-  }
 }
 moyenne = na.omit(moyenne)
 variance = na.omit(variance)
@@ -130,8 +128,8 @@ variance3 <- c()
 skew3 <- c()
 kurto3 <- c()
 for(i in listEnterprise){
-  if(i !="ABBV" & i !="ALLE" & i !="AWK" & i !="BHI"){
-    a = getSymbols(i, auto.assign = FALSE, from = as.Date("1960-01-01"), to = as.Date("2007-01-01"))
+  if(i !="ABBV" & i !="ALLE" & i !="AWK" & i !="BHI" & i !="AVGO" & i !="CBOE"){
+    a = getSymbols(i, auto.assign = FALSE, from = "1960-01-01", to = "2007-01-01")
     adjusted = Ad(a)
     return = exp(diff(log(adjusted))) - 1
     return = return[2:length(return)]
@@ -223,7 +221,7 @@ variancedf4 = data.frame(variance4)
 gg = ggplot(data =variancedf4, aes(x=variance4)) + geom_histogram(binwidth=0.001, colour="black", aes(y=..density.., fill=..count..))
 gg = gg + scale_fill_gradient("Count", low="#DCDCDC", high="#7C7C7C")
 gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(variance4), sd=sd(variance4))) 
-gg = gg + ggtitle("Histogramm of the variance before 2007")
+gg = gg + ggtitle("Histogramm of the variance after 2009")
 gg
 ```
 
@@ -244,4 +242,11 @@ gg = gg + stat_function(fun=dnorm, color="red",args=list(mean=mean(kurto4), sd=s
 gg = gg + ggtitle("Histogramm of the kurtosis coefficient after 2009")
 gg
 ```
+We see that we have 
+We see that log returns have similar variances after 2009 and on all the period.
+
 Question5
+```{r}
+
+```
+
