@@ -1,0 +1,1 @@
+Ressources: Ressource: https://stackoverflow.com/questions/18275306/does-python-has-a-similar-library-like-quantmod-in-r-that-can-download-financial
