@@ -1,3 +1,6 @@
 Ressources:
 https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html
 https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/Data_Library/f-f_5_factors_2x3.html
+https://fr.wikipedia.org/wiki/Mod%C3%A8le_Fama-French_%C3%A0_trois_facteurs
+Utiliser le devoir 1 pour les données. Il va mettre un corriger sur son site normalement.
+J'ai téléchargé le corrigé.
